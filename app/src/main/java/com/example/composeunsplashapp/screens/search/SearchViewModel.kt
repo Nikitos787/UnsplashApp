@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import com.example.composeunsplashapp.data.repository.Repository
 import com.example.composeunsplashapp.model.UnsplashImage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class SearchViewModel @Inject constructor(private val repository: Repository) : 
     }
 
     fun searchImage(query: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.searchImage(query).cachedIn(viewModelScope).collect {
                 _searchImages.value = it
             }

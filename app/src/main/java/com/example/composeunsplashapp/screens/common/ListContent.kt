@@ -38,7 +38,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.wear.compose.material.ContentAlpha
 import androidx.wear.compose.material.Icon
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter.State.Empty.painter
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.composeunsplashapp.R
 import com.example.composeunsplashapp.model.UnsplashImage
 import com.example.composeunsplashapp.model.Urls
@@ -62,11 +66,16 @@ fun ListContent(items: LazyPagingItems<UnsplashImage>) {
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun UnSplashImageItem(unsplashImage: UnsplashImage) {
-    val painter = rememberImagePainter(data = unsplashImage.urls.regular) {
-        crossfade(durationMillis = 1000)
-        error(R.drawable.ic_place_holder)
-        placeholder(R.drawable.ic_place_holder)
-    }
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(unsplashImage.urls.regular)
+            .crossfade(true)
+            .build(),
+        placeholder = painterResource(
+        id = R.drawable.ic_place_holder),
+        error = painterResource(
+            id = R.drawable.ic_place_holder)
+    )
     val context = LocalContext.current
     Box(modifier = Modifier
         .clickable {
@@ -81,12 +90,10 @@ fun UnSplashImageItem(unsplashImage: UnsplashImage) {
         .fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter
     ) {
-        Image(
-            painter = painter,
-            contentDescription = "image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        AsyncImage(model = painter, 
+            contentDescription = null, 
+            modifier = Modifier.fillMaxSize(), 
+            contentScale = ContentScale.Crop)
         Surface(
             modifier = Modifier
                 .height(40.dp)
