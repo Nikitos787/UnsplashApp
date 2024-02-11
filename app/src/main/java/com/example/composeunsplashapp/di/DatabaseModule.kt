@@ -26,5 +26,4 @@ object DatabaseModule {
             UNSPLASH_DATABASE
         ).build()
     }
-
 }

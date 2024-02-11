@@ -1,10 +1,10 @@
 package com.example.composeunsplashapp.model
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchResult(
-    @SerialName("results")
+    @SerializedName("results")
     val images: List<UnsplashImage>,
 )

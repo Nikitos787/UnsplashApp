@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,7 +24,11 @@ fun HomeScreen(
     navController: NavHostController,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val getAllImages = homeViewModel.getAllImages.collectAsLazyPagingItems()
+    val getAllImages = homeViewModel.allImages.collectAsLazyPagingItems()
+
+    LaunchedEffect(key1 = Unit) {
+        homeViewModel.getImages()
+    }
 
     Scaffold(
         topBar = {
@@ -38,7 +43,9 @@ fun HomeScreen(
             .fillMaxSize()
             .background(Color.White)
             .padding(innerPadding)) {
-            ListContent(items = getAllImages)
+            ListContent(items = getAllImages) { id ->
+                navController.navigate(Screen.Details.passImageId(id))
+            }
 
         }
     }

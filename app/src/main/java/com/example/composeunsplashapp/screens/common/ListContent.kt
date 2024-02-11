@@ -1,7 +1,5 @@
 package com.example.composeunsplashapp.screens.common
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,26 +29,18 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.paging.compose.LazyPagingItems
 import androidx.wear.compose.material.ContentAlpha
 import androidx.wear.compose.material.Icon
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.composeunsplashapp.R
 import com.example.composeunsplashapp.model.UnsplashImage
-import com.example.composeunsplashapp.model.Urls
-import com.example.composeunsplashapp.model.User
-import com.example.composeunsplashapp.model.Userlinks
 
 @Composable
-fun ListContent(items: LazyPagingItems<UnsplashImage>) {
+fun ListContent(items: LazyPagingItems<UnsplashImage>, onItemClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(all = 12.dp),
@@ -58,42 +48,42 @@ fun ListContent(items: LazyPagingItems<UnsplashImage>) {
     ) {
         items(count = items.itemCount) { index ->
             val unsplashImage = items[index]
-            unsplashImage?.let { UnSplashImageItem(unsplashImage = it) }
+            unsplashImage?.let {
+                UnSplashImageItem(
+                    unsplashImage = it,
+                    click = { onItemClick(it.id) })
+            }
         }
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
-fun UnSplashImageItem(unsplashImage: UnsplashImage) {
+fun UnSplashImageItem(unsplashImage: UnsplashImage, click: () -> Unit) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(unsplashImage.urls.regular)
             .crossfade(true)
             .build(),
         placeholder = painterResource(
-        id = R.drawable.ic_place_holder),
+            id = R.drawable.ic_place_holder
+        ),
         error = painterResource(
-            id = R.drawable.ic_place_holder)
+            id = R.drawable.ic_place_holder
+        )
     )
-    val context = LocalContext.current
-    Box(modifier = Modifier
-        .clickable {
-            val browserIntent =
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://unsplash.com/@${unsplashImage.user.username}?utm_source=DemoApp&utm_medium=referral")
-                )
-            startActivity(context, browserIntent, null)
-        }
-        .height(300.dp)
-        .fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .clickable(onClick = click)
+            .height(300.dp)
+            .fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter
     ) {
-        AsyncImage(model = painter, 
-            contentDescription = null, 
-            modifier = Modifier.fillMaxSize(), 
-            contentScale = ContentScale.Crop)
+        Image(
+            painter = painter,
+            contentDescription = "image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Surface(
             modifier = Modifier
                 .height(40.dp)
@@ -147,17 +137,4 @@ fun LikeCounter(modifier: Modifier, painter: Painter, likes: String) {
             overflow = TextOverflow.Ellipsis
         )
     }
-}
-
-@Preview
-@Composable
-fun UnSplashItemPreview() {
-    UnSplashImageItem(
-        unsplashImage = UnsplashImage(
-            "1",
-            Urls(regular = ""),
-            likes = 100,
-            user = User(userLinks = Userlinks(""), "nikita")
-        )
-    )
 }

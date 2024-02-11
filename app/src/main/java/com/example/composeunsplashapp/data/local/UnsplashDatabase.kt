@@ -13,5 +13,4 @@ abstract class UnsplashDatabase : RoomDatabase() {
 
     abstract fun unsplashImageDao(): UnsplashImageDao
     abstract fun unsplashRemoteKeysDao(): UnsplashRemoteKeysDao
-
 }

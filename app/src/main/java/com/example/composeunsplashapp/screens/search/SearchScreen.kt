@@ -37,7 +37,7 @@ fun SearchScreen(
     var active by remember {
         mutableStateOf(false)
     }
-    val searchImage = searchViewModel.searchImages.collectAsLazyPagingItems()
+    val searchImage = searchViewModel.searchedImages.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
@@ -67,7 +67,7 @@ fun SearchScreen(
                                     searchViewModel.updateSearchQuery(query = "")
                                 } else {
                                     active = false
-                                    navController.navigate(Screen.Home.route)
+                                    navController.popBackStack()
                                 }
                             }, imageVector = Icons.Default.Close,
                             contentDescription = "close icon"
@@ -84,8 +84,10 @@ fun SearchScreen(
                 .background(Color.White)
                 .padding(innerPadding)
         ) {
-            ListContent(items = searchImage)
+            ListContent(items = searchImage) { id ->
+                navController.navigate(Screen.Details.passImageId(id))
+
+            }
         }
     }
-
 }

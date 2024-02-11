@@ -11,20 +11,22 @@ class SearchPagingSource(
     private val query: String
 ) : PagingSource<Int, UnsplashImage>() {
 
-    override fun getRefreshKey(state: PagingState<Int, UnsplashImage>): Int? {
-        return state.anchorPosition
-    }
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashImage> {
-        val currentPage = params.key ?: 1
         return try {
-            val response = unsplashApi.searchImages(query = query, perPage = ITEMS_PER_PAGE)
+            val currentPage = params.key ?: 1
+            val response = unsplashApi.searchImages(
+                page = currentPage,
+                query = query,
+                perPage = ITEMS_PER_PAGE
+            )
             val endOfPaginationReached = response.images.isEmpty()
+            val prevPage = if (currentPage == 1) null else currentPage - 1
+            val nextPage = if (endOfPaginationReached) null else currentPage + 1
             if (response.images.isNotEmpty()) {
                 LoadResult.Page(
                     data = response.images,
-                    prevKey = if (currentPage == 1) null else currentPage - 1,
-                    nextKey = if (endOfPaginationReached) null else currentPage + 1
+                    prevKey = prevPage,
+                    nextKey = nextPage
                 )
             } else {
                 LoadResult.Page(
@@ -36,5 +38,9 @@ class SearchPagingSource(
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, UnsplashImage>): Int? {
+        return state.anchorPosition
     }
 }
