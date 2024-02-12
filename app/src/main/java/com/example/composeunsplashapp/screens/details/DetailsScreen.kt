@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -52,7 +53,7 @@ fun DetailsScreen(
     ) { innerPadding ->
         Surface(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(Color.White)
                 .padding(innerPadding)
         ) {
