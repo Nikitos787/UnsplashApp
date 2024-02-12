@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.composeunsplashapp.data.repository.Repository
 import com.example.composeunsplashapp.model.UnsplashImage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,10 +23,12 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val allImages = repository.getAllImages()
+        .cachedIn(viewModelScope)
         .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = PagingData.empty()
         )
+        .cachedIn(viewModelScope)
 }
