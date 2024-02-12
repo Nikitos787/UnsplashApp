@@ -47,6 +47,7 @@ class Repository @Inject constructor(
     fun getImage(id: String): Flow<UnsplashImage> {
         return flow {
             val image = unsplashApi.getImage(id)
+            emit(image)
             Log.d("Repository", image.toString())
         }
     }

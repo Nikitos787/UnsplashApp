@@ -22,6 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.paging.ExperimentalPagingApi
+import com.example.composeunsplashapp.model.UnsplashImage
+import com.example.composeunsplashapp.model.Urls
+import com.example.composeunsplashapp.model.User
 import com.example.composeunsplashapp.screens.common.UnSplashImageItem
 
 @OptIn(ExperimentalPagingApi::class, ExperimentalMaterial3Api::class)
@@ -30,14 +33,14 @@ fun DetailsScreen(
     navController: NavHostController,
     detailsImageViewModel: DetailsImageViewModel = hiltViewModel()
 ) {
-    val imageState by detailsImageViewModel.unsplashImage.collectAsStateWithLifecycle()
+    val imageState by detailsImageViewModel.newImageState.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
         val id = navController.currentBackStackEntry?.arguments?.getString("id")
         Log.d("DetailsScreen", "LaunchedEffect called with id: $id")
         if (!id.isNullOrEmpty()) {
             Log.d("DetailsScreen", "Calling getImage() with id: $id")
-            detailsImageViewModel.getImage(id)
+            detailsImageViewModel.setId(id)
         }
     }
 

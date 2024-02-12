@@ -7,8 +7,10 @@ import androidx.paging.PagingData
 import com.example.composeunsplashapp.data.repository.Repository
 import com.example.composeunsplashapp.model.UnsplashImage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,19 +18,14 @@ import javax.inject.Inject
 @ExperimentalPagingApi
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: Repository
-): ViewModel() {
+    repository: Repository
+) : ViewModel() {
 
-    private var _allImages = MutableStateFlow<PagingData<UnsplashImage>>(PagingData.empty())
-    val allImages = _allImages
-
-    fun getImages() {
-        viewModelScope.launch {
-            repository.getAllImages()
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
-                .collect {
-                _allImages.value = it
-            }
-        }
-    }
+    val allImages = repository.getAllImages()
+        .flowOn(Dispatchers.IO)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = PagingData.empty()
+        )
 }

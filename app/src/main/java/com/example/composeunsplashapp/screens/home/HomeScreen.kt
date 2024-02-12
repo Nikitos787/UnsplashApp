@@ -26,10 +26,6 @@ fun HomeScreen(
 ) {
     val getAllImages = homeViewModel.allImages.collectAsLazyPagingItems()
 
-    LaunchedEffect(key1 = Unit) {
-        homeViewModel.getImages()
-    }
-
     Scaffold(
         topBar = {
             HomeTopBar(
